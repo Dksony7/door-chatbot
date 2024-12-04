@@ -1,15 +1,18 @@
-import os
 from pymongo import MongoClient
+import os
 
-# Get MongoDB URI from environment variable
-uri = os.getenv("MONGO_URI")
+# Retrieve MongoDB URI from environment variable
+uri = os.getenv("MONGO_URI")  # or hard-code the URI for testing
 
-# Create a new client and connect to the server
+# Initialize MongoDB client
 client = MongoClient(uri)
 
-# Send a ping to confirm a successful connection
+# Connect to the specific database
+db = client.door_inventory  # Ensure 'db' is correctly defined and accessible
+
+# Optionally, check the connection
 try:
     client.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
-    print(e)
+    print("Error:", e)
