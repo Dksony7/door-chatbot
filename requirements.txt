@@ -3,3 +3,4 @@ pymongo
 uvicorn
 openai
 requests
+gunicorn
