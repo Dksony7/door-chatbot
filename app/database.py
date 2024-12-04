@@ -1,17 +1,15 @@
-from pymongo import MongoClient
 import os
+from pymongo import MongoClient
 
-# Fetch MongoDB URI from environment variable
-mongo_uri = os.environ.get("MONGO_URI", "mongodb+srv://<db_username>:<db_password>@cluster0.dajxp.mongodb.net/?retryWrites=true&w=majority")
+# Get MongoDB URI from environment variable
+uri = os.getenv("MONGO_URI")
 
-# MongoDB Atlas connection
-client = MongoClient(mongo_uri)
+# Create a new client and connect to the server
+client = MongoClient(uri)
 
-# Check connection by fetching database names
+# Send a ping to confirm a successful connection
 try:
-    # This will raise an exception if the connection fails
-    db = client.door_inventory
-    client.server_info()  # Fetch server info to verify connection
-    print("Connected to MongoDB Atlas successfully.")
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
-    print(f"Failed to connect to MongoDB Atlas. Error: {e}")
+    print(e)
