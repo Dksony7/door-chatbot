@@ -1,0 +1,5 @@
+fastapi
+pymongo
+uvicorn
+openai
+requests
