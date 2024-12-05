@@ -8,7 +8,7 @@ uri = "mongodb+srv://<db_username>:<db_password>@cluster0.dajxp.mongodb.net/?ret
 client = MongoClient(uri, server_api=ServerApi('1'))
 
 # Specify the database name
-db = client['door_inventory']  # Replace 'door_inventory' with your database name
+db = client['Cluster0']  # Replace 'door_inventory' with your database name
 
 # Test the connection
 try:
