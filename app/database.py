@@ -2,7 +2,7 @@ from pymongo import MongoClient
 
 # MongoDB Atlas connection
 client = MongoClient("mongodb+srv://Dipika:9812009386@cluster0.dajxp.mongodb.net/?retryWrites=true&w=majority")
-db = client.door_inventory
+db = client.Cluster0
 
 # Check connection
 if db:
