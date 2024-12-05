@@ -1,11 +1,15 @@
-from pymongo import MongoClient
 
-# MongoDB Atlas connection
-client = MongoClient("mongodb+srv://Dipika:9812009386@cluster0.dajxp.mongodb.net/?retryWrites=true&w=majority")
-db = client.door_inventory
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
-# Check connection
-if db:
-    print("Connected to MongoDB Atlas.")
-else:
-    print("Failed to connect to MongoDB.")
+uri = "mongodb+srv://<db_username>:<db_password>@cluster0.dajxp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+# Create a new client and connect to the server
+client = MongoClient(uri, server_api=ServerApi('1'))
+
+# Send a ping to confirm a successful connection
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
