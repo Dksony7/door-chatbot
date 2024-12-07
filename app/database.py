@@ -7,8 +7,8 @@ uri = "mongodb+srv://Dipika:9812009386@cluster0.dajxp.mongodb.net/?retryWrites=t
 # Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi('1'))
 
-# Specify the database name
-db = client['Door']  # Replace 'door_inventory' with your database name
+# Specify the correct database name
+db = client['doors']  # MongoDB dashboard ke hisaab se lowercase 'doors'
 
 # Test the connection
 try:
