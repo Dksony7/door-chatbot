@@ -5,7 +5,8 @@ router = APIRouter()
 
 @router.get("/doors/{size}")
 def get_doors_by_size(size: str):
-    doors = list(db.doors.find({"size": size}))
+    # Update the collection name
+    doors = list(db["doors.doors"].find({"size": size}))
     if not doors:
         return {"message": f"No doors available for size {size}."}
 
@@ -23,7 +24,8 @@ def get_doors_by_size(size: str):
 
 @router.post("/update_stock")
 def update_stock(design: str, size: str, sold: int):
-    door = db.doors.find_one({"design": design, "size": size})
+    # Update the collection name
+    door = db["doors.doors"].find_one({"design": design, "size": size})
     if not door:
         return {"message": f"No door found for design {design} and size {size}."}
     
@@ -31,5 +33,5 @@ def update_stock(design: str, size: str, sold: int):
     if new_stock < 0:
         return {"message": "Insufficient stock."}
 
-    db.doors.update_one({"_id": door["_id"]}, {"$set": {"stock": new_stock}})
+    db["doors.doors"].update_one({"_id": door["_id"]}, {"$set": {"stock": new_stock}})
     return {"message": "Stock updated successfully."}
