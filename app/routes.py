@@ -1,12 +1,13 @@
 from fastapi import APIRouter
 from app.database import db
 
-# Initialize the router
 router = APIRouter()
 
 @router.get("/doors/{size}")
 def get_doors_by_size(size: str):
-    doors = list(db.doors.find({"size": size}))
+    # Fetch doors from Door.Ok collection
+    doors = list(db["Door.Ok"].find({"size": size}))
+    print(f"Fetched doors for size {size}: {doors}")  # Debug print
     if not doors:
         return {"message": f"No doors available for size {size}."}
 
@@ -24,7 +25,8 @@ def get_doors_by_size(size: str):
 
 @router.post("/update_stock")
 def update_stock(design: str, size: str, sold: int):
-    door = db.doors.find_one({"design": design, "size": size})
+    # Fetch door by design and size from Door.Ok collection
+    door = db["Door.Ok"].find_one({"design": design, "size": size})
     if not door:
         return {"message": f"No door found for design {design} and size {size}."}
     
@@ -32,5 +34,5 @@ def update_stock(design: str, size: str, sold: int):
     if new_stock < 0:
         return {"message": "Insufficient stock."}
 
-    db.doors.update_one({"_id": door["_id"]}, {"$set": {"stock": new_stock}})
+    db["Door.Ok"].update_one({"_id": door["_id"]}, {"$set": {"stock": new_stock}})
     return {"message": "Stock updated successfully."}
