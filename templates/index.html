@@ -126,7 +126,7 @@
     </div>
 
     <script>
-        const apiBaseUrl = "https://door-chatbot9oloollloololiiiool-ill.onrender.com";  // Update with your Render URL
+        const apiBaseUrl = "https://your-render-url";  // Update with your Render URL
         const chatBody = document.getElementById("chat-body");
         const userInput = document.getElementById("user-input");
 
@@ -135,7 +135,6 @@
             messageDiv.className = `chat-message ${sender}`;
             messageDiv.innerText = text;
 
-            // Check if imageUrl is provided
             if (imageUrl) {
                 const img = document.createElement("img");
                 img.src = imageUrl;  // Full image URL
@@ -158,8 +157,7 @@
             userInput.value = "";  // Clear input field
 
             try {
-                const formattedSize = message.toLowerCase().replace(/\s/g, "");  // Format size (e.g., 32x80)
-                const response = await fetch(`${apiBaseUrl}/doors/${formattedSize}`, {
+                const response = await fetch(`${apiBaseUrl}/chat?user_query=${encodeURIComponent(message)}`, {
                     method: "GET",
                 });
 
@@ -168,14 +166,7 @@
                 }
 
                 const data = await response.json();
-                addMessage(`Here are the doors available for size ${formattedSize}:`);
-
-                Object.entries(data.details).forEach(([doorType, designs]) => {
-                    designs.forEach((design) => {
-                        // Displaying message and image together
-                        addMessage(`${doorType}: ${design.design} (Stock: ${design.stock})`, "bot", apiBaseUrl + design.image_path);
-                    });
-                });
+                addMessage(data.response, "bot");
             } catch (error) {
                 addMessage("Sorry, I couldn't fetch the details. Please try again.", "bot");
             }
