@@ -5,7 +5,7 @@ client = MongoClient("mongodb+srv://Dipika:9812009386@cluster0.dajxp.mongodb.net
 db = client.doors
 
 # Check connection
-if db:
+if db is not None:  # Change yahan kiya gaya hai
     print("Connected to MongoDB Atlas.")
 else:
     print("Failed to connect to MongoDB.")
