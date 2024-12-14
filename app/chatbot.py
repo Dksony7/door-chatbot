@@ -1,13 +1,12 @@
 import openai
 import requests
 
-# Your OpenAI API key
+# Add your OpenAI API key
 openai.api_key = "wBjYlt1APOeDrYcIQyNjrTAV"
 
-# Function to get door details for a specific size
+# Function to get door details
 def get_door_details(size):
-    # Make sure to replace with your Render API URL
-    response = requests.get(f"https://your-render-url/doors/{size}")
+    response = requests.get(f"https://door-chatbot9oloollloololiiiool-ill.onrender.com}")
     if response.status_code != 200:
         return "Sorry, could not fetch the door details."
 
@@ -25,18 +24,21 @@ def get_door_details(size):
             )
     return message
 
-# Function to handle chatbot response
+# Updated chatbot response function
 def chatbot_response(user_query):
     if "size" in user_query.lower():
         size = user_query.split()[-1]
         return get_door_details(size)
 
-    # OpenAI response generation
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "You are a multilingual assistant. Answer in the language of the user."},
-            {"role": "user", "content": user_query}
-        ]
-    )
-    return response.choices[0].message["content"]
+    # Using the updated API for OpenAI
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are a multilingual assistant. Answer in the language of the user."},
+                {"role": "user", "content": user_query}
+            ]
+        )
+        return response["choices"][0]["message"]["content"]
+    except Exception as e:
+        return f"Error in generating response: {e}"
