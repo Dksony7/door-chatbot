@@ -1,5 +1,5 @@
 from fastapi import FastAPI, APIRouter, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from app.database import db  # Import the MongoDB connection from database.py
 
@@ -11,12 +11,13 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 router = APIRouter()
 
-@router.get("/")
-def root():
+@router.get("/", response_class=HTMLResponse)
+async def serve_index():
     """
-    Default route to check if the server is running.
+    Serve the index.html file for the chatbot frontend.
     """
-    return {"message": "Welcome to the Doors API!"}
+    with open("templates/index.html") as file:
+        return file.read()
 
 @router.get("/doors/{size}")
 def get_doors_by_size(size: str):
