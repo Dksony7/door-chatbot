@@ -1,7 +1,12 @@
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from app.database import db  # Import the MongoDB connection from database.py
+from fastapi.staticfiles import StaticFiles
 
 router = APIRouter()
+
+# Serve static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @router.get("/")
@@ -30,7 +35,7 @@ def get_doors_by_size(size: str):
         grouped_data[door["type"]].append({
             "design": door["design"],
             "stock": door["stock"],
-            "image_path": door["image_path"]
+            "image_path": door["image_path"]  # This will give the relative path to the image
         })
 
     return {"size": size, "details": grouped_data}
