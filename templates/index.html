@@ -130,16 +130,18 @@
         const chatBody = document.getElementById("chat-body");
         const userInput = document.getElementById("user-input");
 
-        function addMessage(text, sender = "bot", imageUrl = null) {
+        // Function to add a message to the chat
+        function addMessage(text, sender = "bot", imagePath = null) {
             const messageDiv = document.createElement("div");
             messageDiv.className = `chat-message ${sender}`;
             messageDiv.innerText = text;
 
-            if (imageUrl) {
+            // If there's an image path, create and append the image
+            if (imagePath) {
                 const img = document.createElement("img");
-                img.src = imageUrl;
+                img.src = imagePath; // This will be a relative path
                 img.alt = "Door Design";
-                img.className = "image";
+                img.className = "image";  // You can style it via CSS
                 messageDiv.appendChild(img);
             }
 
@@ -147,14 +149,13 @@
             chatBody.scrollTop = chatBody.scrollHeight; // Scroll to bottom
         }
 
+        // Function to send a message to the backend and display response
         async function sendMessage() {
             const message = userInput.value.trim();
             if (!message) return;
 
-            // Add user message to chat
             addMessage(message, "user");
-
-            userInput.value = ""; // Clear input field
+            userInput.value = "";  // Clear input field
 
             try {
                 const response = await fetch(`${apiBaseUrl}/doors/${message}`, {
@@ -171,6 +172,7 @@
                 // Add designs to the chat
                 Object.entries(data.details).forEach(([doorType, designs]) => {
                     designs.forEach((design) => {
+                        // Displaying message and image together
                         addMessage(`${doorType}: ${design.design} (Stock: ${design.stock})`, "bot", design.image_path);
                     });
                 });
@@ -179,6 +181,7 @@
             }
         }
 
+        // Function to start voice recognition
         function startListening() {
             if (!('webkitSpeechRecognition' in window)) {
                 alert("Sorry, your browser does not support voice recognition.");
@@ -213,4 +216,4 @@
         }
     </script>
 </body>
-  </html>
+</html>
