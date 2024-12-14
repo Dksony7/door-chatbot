@@ -1,16 +1,13 @@
 import openai
 import requests
 
-# Set your OpenAI API key here
+# Your OpenAI API key
 openai.api_key = "wBjYlt1APOeDrYcIQyNjrTAV"
 
-# Update the URL to use the production URL (e.g., Render or Heroku URL)
-# In your case, you may have a URL like "https://door-chatbot9oloollloololiiiool-ill.onrender.com"
-DOOR_API_BASE_URL = "https://door-chatbot9oloollloololiiiool-ill.onrender.com/doors"  # Change to the deployed API URL
-
+# Function to get door details for a specific size
 def get_door_details(size):
-    # Send a GET request to the updated door details URL
-    response = requests.get(f"{DOOR_API_BASE_URL}/{size}")
+    # Make sure to replace with your Render API URL
+    response = requests.get(f"https://your-render-url/doors/{size}")
     if response.status_code != 200:
         return "Sorry, could not fetch the door details."
 
@@ -28,13 +25,13 @@ def get_door_details(size):
             )
     return message
 
+# Function to handle chatbot response
 def chatbot_response(user_query):
-    # Check if user is asking for door details (size)
     if "size" in user_query.lower():
         size = user_query.split()[-1]
         return get_door_details(size)
 
-    # If user is asking for general queries, use OpenAI's GPT-4 model to generate a response
+    # OpenAI response generation
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
