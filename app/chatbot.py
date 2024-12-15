@@ -2,7 +2,7 @@ import openai
 import requests
 
 # Set OpenAI API key
-openai.api_key = "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"
+openai.api_key = "sk-svcacct-BtC1ulRO0lz3eK59g57OdROngIgfIZRPoDCalOUv6636dycRrs0G3B2FPrsT3BlbkFJS9HeMZfgCTpkIu1EJ-e2Cj-xoGtcQ84VE3pAcLSqV2pw8ArxDGC_SEKMcDQA"
 
 # Function to fetch door details based on size
 def get_door_details(size):
