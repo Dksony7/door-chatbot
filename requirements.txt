@@ -5,3 +5,4 @@ openai
 requests
 gunicorn
 flask
+python-multipart
