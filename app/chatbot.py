@@ -38,7 +38,7 @@ def chatbot_response(user_query):
 
         # Generate a response using OpenAI's ChatCompletion
         response = openai.ChatCompletion.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a multilingual assistant. Answer in the language of the user."},
                 {"role": "user", "content": user_query},
