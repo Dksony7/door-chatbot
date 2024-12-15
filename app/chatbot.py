@@ -6,7 +6,7 @@ openai.api_key = "wBjYlt1APOeDrYcIQyNjrTAV"
 
 # Function to get door details
 def get_door_details(size):
-    response = requests.get(f"https://door-chatbot9oloollloololiiiool-ill.onrender.com}")
+    response = requests.get(f"https://door-chatbot9oloollloololiiiool-ill.onrender.com/doors/{size}")
     if response.status_code != 200:
         return "Sorry, could not fetch the door details."
 
