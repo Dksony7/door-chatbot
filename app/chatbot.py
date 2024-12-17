@@ -1,7 +1,7 @@
 import requests
 
 # Your actual API key from GCP Console
-gemini_api_key = "AIzaSyDzsEkRWRHsxY08cBmExiYI2wxlMV-AGeQ"  # Replace with your actual key
+gemini_api_key = "AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8"  # Replace with your actual key
 
 # Function to call Gemini API
 async def chatbot_response(user_query):
