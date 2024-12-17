@@ -1,7 +1,7 @@
 fastapi
 pymongo
 uvicorn
-openai==0.28
+
 requests
 gunicorn
 flask
