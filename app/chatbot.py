@@ -1,45 +1,44 @@
 import requests
+import asyncio
+from database import get_collection  # database.py se collection import karna
 
-# Your actual API key from GCP Console
-gemini_api_key = "AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8"  # Replace with your actual key
+gemini_api_key = "AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8"
 
-# Function to call Gemini API
-async def chatbot_response(user_query):
+async def chatbot_response(door_size):
     try:
-        # Request body for Gemini API
-        request_body = {
-            "contents": [
-                {"role": "user", "parts": [{"text": user_query}]}
-            ]
-        }
+        # Fetch data from MongoDB
+        collection = get_collection()  # Database connection ko fetch kar rahe hain
+        door_data = collection.find_one({"size": door_size})
+        if not door_data:
+            return f"No data found for size {door_size}."
 
-        # Correct Gemini API Endpoint
+        # Prepare user query
+        user_query = f"What is the stock for {door_size} doors? Available stock is {door_data['stock']}."
+
+        # Gemini API Request
+        request_body = {
+            "contents": [{"role": "user", "parts": [{"text": user_query}]}]
+        }
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={gemini_api_key}"
 
-        # Call the Gemini API
         response = requests.post(
             url,
-            headers={
-                "Content-Type": "application/json",
-            },
+            headers={"Content-Type": "application/json"},
             json=request_body,
             timeout=10
         )
 
         # Check for successful response
         if response.status_code != 200:
-            return f"Error in generating response. HTTP {response.status_code}: {response.text}"
+            return f"Error: HTTP {response.status_code}: {response.text}"
 
         # Parse the response
         data = response.json()
-        return data["candidates"][0]["content"]["parts"][0]["text"]  # Extract the chatbot response
+        return data["candidates"][0]["content"]["parts"][0]["text"]
 
-    except requests.exceptions.Timeout:
-        return "Request to Gemini API timed out. Please try again."
-    except requests.exceptions.RequestException as e:
-        return f"Error in generating response: {e}"
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 # Example usage
-import asyncio
-response = asyncio.run(chatbot_response("What is the stock for 32×80 doors?"))
+response = asyncio.run(chatbot_response("32×80"))
 print(response)
