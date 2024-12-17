@@ -1,7 +1,7 @@
 import requests
 
-# Gemini API Key
-gemini_api_key = "AIzaSyDzsEkRWRHsxY08cBmExiYI2wxlMV-AGeQ"
+# Your actual API key from GCP Console
+gemini_api_key = "AIzaSyDzsEkRWRHsxY08cBmExiYI2wxlMV-AGeQ"  # Replace with your actual key
 
 # Function to call Gemini API
 async def chatbot_response(user_query):
@@ -41,3 +41,4 @@ async def chatbot_response(user_query):
         return "Request to Gemini API timed out. Please try again."
     except requests.exceptions.RequestException as e:
         return f"Error in generating response: {e}"
+        
