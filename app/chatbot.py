@@ -1,6 +1,6 @@
 import asyncio
 from app.database import get_collection  # Corrected import
-
+import requests
 gemini_api_key = "AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8"
 
 
