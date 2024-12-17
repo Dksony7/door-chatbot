@@ -8,21 +8,18 @@ async def chatbot_response(user_query):
     try:
         # Request body for Gemini API
         request_body = {
-            "prompt": {
-                "messages": [
-                    {"author": "system", "content": "You are a multilingual assistant. Answer in the language of the user."},
-                    {"author": "user", "content": user_query},
-                ]
-            },
-            "temperature": 0.7,
-            "candidate_count": 1
+            "contents": [
+                {"role": "user", "parts": [{"text": user_query}]}
+            ]
         }
+
+        # Correct Gemini API Endpoint
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={gemini_api_key}"
 
         # Call the Gemini API
         response = requests.post(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent",
+            url,
             headers={
-                "Authorization": f"Bearer {gemini_api_key}",
                 "Content-Type": "application/json",
             },
             json=request_body,
@@ -35,10 +32,14 @@ async def chatbot_response(user_query):
 
         # Parse the response
         data = response.json()
-        return data["candidates"][0]["output"]  # Extract the chatbot response
+        return data["candidates"][0]["content"]["parts"][0]["text"]  # Extract the chatbot response
 
     except requests.exceptions.Timeout:
         return "Request to Gemini API timed out. Please try again."
     except requests.exceptions.RequestException as e:
         return f"Error in generating response: {e}"
-        
+
+# Example usage
+import asyncio
+response = asyncio.run(chatbot_response("What is the stock for 32×80 doors?"))
+print(response)
