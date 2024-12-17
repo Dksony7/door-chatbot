@@ -1,13 +1,12 @@
 import requests
-import asyncio
-from database import get_collection  # database.py se collection import karna
+from app.database import get_collection  # Corrected import path
 
 gemini_api_key = "AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8"
 
 async def chatbot_response(door_size):
     try:
         # Fetch data from MongoDB
-        collection = get_collection()  # Database connection ko fetch kar rahe hain
+        collection = get_collection()  # Fetching MongoDB collection
         door_data = collection.find_one({"size": door_size})
         if not door_data:
             return f"No data found for size {door_size}."
