@@ -11,8 +11,9 @@ doors = db['doors']
 # Base URL for static files
 base_url = "https://door-chatbot9oloollloololiiiool-ill.onrender.com/static/"
 
-# Gemini API Key (store securely in environment variables)
-GEMINI_API_KEY = "AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8"
+
+
+GEMINI_API_KEY = AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8
 GEMINI_API_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/"
     f"gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
@@ -49,7 +50,7 @@ def generate_gemini_response(query):
         data = response.json()
         return data.get("candidates", [{}])[0].get("output", "No response available.")
     except requests.exceptions.RequestException as e:
-        # Log or return an error message for debugging
+        # Log or return an error message
         return f"Error communicating with Gemini API: {e}"
 
 
@@ -88,3 +89,4 @@ def chat():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
