@@ -12,4 +12,4 @@ else:
 
 def get_collection():
     # Return the MongoDB collection you want to use
-    return db.doors  # Specify your collection name here
+    return db["doors"]  # Specify your collection name here
