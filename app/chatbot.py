@@ -35,7 +35,7 @@ def generate_gemini_response(query):
     Function to communicate with the Gemini API to generate responses.
     """
     response = requests.post(
-        f"https://gemini-api-url.com/generate",  # Replace with actual Gemini API URL
+        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8",  # Replace with actual Gemini API URL
         headers={"Authorization": f"Bearer {gemini_api_key}"},
         json={"query": query}
     )
