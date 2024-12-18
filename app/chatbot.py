@@ -1,7 +1,5 @@
-
 import requests
 from app.database import db
-import asyncio
 from flask import Flask, request, jsonify
 
 # Initialize the Flask app
@@ -10,16 +8,21 @@ app = Flask(__name__)
 # Access the 'doors' collection
 doors = db['doors']
 
-# Gemini API key (already provided)
-gemini_api_key = "AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8"
+# Base URL for static files
 base_url = "https://door-chatbot9oloollloololiiiool-ill.onrender.com/static/"
+
+# Gemini API Key (store securely in environment variables)
+GEMINI_API_KEY = "AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8"
+GEMINI_API_URL = (
+    f"https://generativelanguage.googleapis.com/v1beta/models/"
+    f"gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+)
 
 
 def get_door_info(query):
     """
-    Function to process the query and fetch door details from the database.
+    Fetch door details from the database based on the query.
     """
-    # Check if the query mentions a door type
     door_type_keywords = ['membrane', 'digital', 'warranty']
     matched_doors = []
 
@@ -30,21 +33,30 @@ def get_door_info(query):
 
     return matched_doors
 
+
 def generate_gemini_response(query):
     """
-    Function to communicate with the Gemini API to generate responses.
+    Communicate with the Gemini API to generate a response.
     """
-    response = requests.post(
-        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8",  # Replace with actual Gemini API URL
-        headers={"Authorization": f"Bearer {gemini_api_key}"},
-        json={"query": query}
-    )
-    return response.json().get('response', 'Sorry, I couldn\'t understand the query.')
+    headers = {"Content-Type": "application/json"}
+    payload = {"prompt": query}  # Use "prompt" as expected by Gemini API
+
+    try:
+        response = requests.post(GEMINI_API_URL, headers=headers, json=payload)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+
+        # Parse the API response
+        data = response.json()
+        return data.get("candidates", [{}])[0].get("output", "No response available.")
+    except requests.exceptions.RequestException as e:
+        # Log or return an error message for debugging
+        return f"Error communicating with Gemini API: {e}"
+
 
 @app.route("/chat", methods=["POST"])
 def chat():
     """
-    Endpoint to handle incoming user queries.
+    Handle incoming user queries.
     """
     user_query = request.json.get("query")
 
@@ -63,7 +75,7 @@ def chat():
                 "design": door.get("design"),
                 "size": door.get("size"),
                 "stock": door.get("stock"),
-                "image": base_url + door.get("image_path")  # Assuming you store image path
+                "image": base_url + door.get("image_path", "")  # Assuming you store image path
             })
 
         return jsonify({"door_info": door_details})
@@ -72,6 +84,7 @@ def chat():
     gemini_response = generate_gemini_response(user_query)
 
     return jsonify({"response": gemini_response})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
