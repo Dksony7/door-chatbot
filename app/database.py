@@ -2,26 +2,25 @@ from pymongo import MongoClient
 
 # MongoDB Atlas connection
 client = MongoClient("mongodb+srv://Dipika:9812009386@cluster0.dajxp.mongodb.net/?retryWrites=true&w=majority")
-db = client.doors  # Specify your database name
+db = client['doors']  # Database name: doors
+collection = db['doors']  # Collection name: doors
 
-# Check connection
-if db is not None:
-    print("Connected to MongoDB Atlas.")
-else:
-    print("Failed to connect to MongoDB.")
+# Function to fetch all door designs
+def fetch_all_doors():
+    try:
+        # Query all documents in the collection
+        all_doors = collection.find()
+        
+        # Display the data
+        for door in all_doors:
+            print(f"Design: {door.get('design')}")
+            print(f"Image Path: {door.get('image_path')}")
+            print(f"Size: {door.get('size')}")
+            print("-" * 30)  # Separator for clarity
 
-def get_collection():
-    # Return the MongoDB collection you want to use
-    return db["doors"]  # Specify your collection name here
+    except Exception as e:
+        print(f"Error fetching data: {e}")
 
-try:
-    # Fetch the collection
-    collection = get_collection()
-    # Query stock data
-    stock_data = collection.find_one({"design": "Digital"})  # Example query
-    if stock_data:
-        print("Stock Data:", stock_data)
-    else:
-        print("No stock found for the specified query.")
-except Exception as e:
-    print(f"Error in fetching stock: {e}")
+# Call the function
+if __name__ == "__main__":
+    fetch_all_doors()
