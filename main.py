@@ -1,9 +1,9 @@
 import os
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from app.routes import router
-from app.chatbot import chatbot_response  # Updated chatbot logic with Gemini integration
+from app.chatbot import chatbot_response  # Ensure chatbot_response is properly defined
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -11,7 +11,7 @@ app = FastAPI()
 # Mount static files directory
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Include router for additional routes
+# Include additional routes
 app.include_router(router)
 
 # Serve the index.html file
@@ -26,13 +26,13 @@ async def serve_index():
 # Chatbot endpoint for POST requests
 @app.post("/chat")
 async def chat_with_bot(user_query: str = Form(...)):
-    response = await chatbot_response(user_query)  # Call the asynchronous chatbot_response
+    response = chatbot_response(user_query)  # Removed `await` if chatbot_response is not async
     return {"response": response}
 
-# Optional: Allow GET requests for /chat (if required)
+# Optional: Allow GET requests for /chat
 @app.get("/chat")
 async def chat_with_bot_get(user_query: str):
-    response = await chatbot_response(user_query)  # Call the asynchronous chatbot_response
+    response = chatbot_response(user_query)  # Removed `await` if chatbot_response is not async
     return {"response": response}
 
 # Run the app
