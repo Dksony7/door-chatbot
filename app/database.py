@@ -6,7 +6,7 @@ db = client['doors']  # Database name: doors
 collection = db['doors']  # Collection name: doors
 
 # Function to fetch all door designs
-def fetch_all_doors():
+def doors():
     try:
         # Query all documents in the collection
         all_doors = collection.find()
