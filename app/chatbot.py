@@ -1,106 +1,77 @@
-import asyncio
-from app.database import db  # Corrected import
-doors = db['doors']  # 'doors' collection access karo
+
 import requests
+from app.database import db
+import asyncio
+from flask import Flask, request, jsonify
+
+# Initialize the Flask app
+app = Flask(__name__)
+
+# Access the 'doors' collection
+doors = db['doors']
+
+# Gemini API key (already provided)
 gemini_api_key = "AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8"
-
-
-
-
-# Assuming your images are hosted in a static folder structure (e.g., Render or GitHub Pages)
 base_url = "https://door-chatbot9oloollloololiiiool-ill.onrender.com/static/"
 
-async def chatbot_response(user_query):
-    try:
-        # Normalize the query and check for different types of requests
-        if "stock" in user_query.lower():
-            # Example: "32×80 stock" or "Membrane stock"
-            return await get_stock(user_query)
-        
-        elif "update stock" in user_query.lower():
-            # Example: "update stock 2 digital1 32×78"
-            return await update_stock(user_query)
-        
-        else:
-            return "Sorry, I didn't understand the request."
 
-    except Exception as e:
-        return f"Error: {str(e)}"
+def get_door_info(query):
+    """
+    Function to process the query and fetch door details from the database.
+    """
+    # Check if the query mentions a door type
+    door_type_keywords = ['membrane', 'digital', 'warranty']
+    matched_doors = []
 
-async def get_stock(user_query):
-    try:
-        # Extract size or design or type from the query
-        if "digital" in user_query.lower():
-            design = user_query.split(" ")[0]
-            door_data = doors.find_one({"design": design})
-        
-        elif "membrane" in user_query.lower():
-            door_data = doors.find_one({"type": "membrane"})
-        
-        elif "32×80" in user_query:
-            door_data = doors.find_one({"size": "32×80"})
-        
-        if door_data:
-            # Determine the appropriate image URL
-            image_url = get_image_url(door_data)
-            return f"Stock for {door_data['design']} {door_data['size']}: {door_data['stock']} doors. Image: {image_url}"
-        else:
-            return "No data found for the requested door."
+    for door in doors.find():  # Assuming this fetches all doors
+        for keyword in door_type_keywords:
+            if keyword in query.lower():
+                matched_doors.append(door)
 
-    except Exception as e:
-        return f"Error in fetching stock: {str(e)}"
+    return matched_doors
 
-async def update_stock(user_query):
-    try:
-        # Extract the details from the query (amount, design, size)
-        parts = user_query.split()
-        sold_quantity = int(parts[2])  # Example: 2
-        design = parts[3]  # Example: "digital1"
-        size = parts[4]  # Example: "32×78"
-        
-        # Find the door in the collection
-        door_data = doors.find_one({"design": design, "size": size})
-        
-        if door_data:
-            # Update the stock
-            new_stock = door_data['stock'] - sold_quantity
-            doors.update_one(
-                {"design": design, "size": size},
-                {"$set": {"stock": new_stock}}
-            )
-            # Get the updated image URL
-            image_url = get_image_url(door_data)
-            return f"Stock updated! Now {design} {size} has {new_stock} doors. Image: {image_url}"
-        else:
-            return "No data found for the specified door."
-    
-    except Exception as e:
-        return f"Error in updating stock: {str(e)}"
+def generate_gemini_response(query):
+    """
+    Function to communicate with the Gemini API to generate responses.
+    """
+    response = requests.post(
+        f"https://gemini-api-url.com/generate",  # Replace with actual Gemini API URL
+        headers={"Authorization": f"Bearer {gemini_api_key}"},
+        json={"query": query}
+    )
+    return response.json().get('response', 'Sorry, I couldn\'t understand the query.')
 
-def get_image_url(door_data):
-    # Determine the folder based on the door type and design
-    if door_data['type'] == "membrane":
-        folder = "membrane"
-    elif door_data['type'] == "digital":
-        folder = "digital"
-    elif door_data['type'] == "warranty":
-        folder = "warranty"
-    else:
-        folder = "default"
+@app.route("/chat", methods=["POST"])
+def chat():
+    """
+    Endpoint to handle incoming user queries.
+    """
+    user_query = request.json.get("query")
 
-    # Construct the image URL (assuming it's hosted on a public URL like GitHub Pages or Render)
-    image_filename = f"{door_data['design']}.jpg"  # Assuming the design is used as the filename
-    image_url = f"{base_url}{folder}/{image_filename}"
-    
-    return image_url
+    if not user_query:
+        return jsonify({"error": "Query is required"}), 400
 
-# Example Usage
+    # Fetch door information if related to doors
+    door_info = get_door_info(user_query)
 
-response = asyncio.run(chatbot_response("update stock 2 digital1 32×78"))
-print(response)
+    if door_info:
+        # Prepare door details to send as response
+        door_details = []
+        for door in door_info:
+            door_details.append({
+                "type": door.get("type"),
+                "design": door.get("design"),
+                "size": door.get("size"),
+                "stock": door.get("stock"),
+                "image": base_url + door.get("image_path")  # Assuming you store image path
+            })
 
-response = asyncio.run(chatbot_response("32×80 stock"))
-print(response)
+        return jsonify({"door_info": door_details})
 
+    # If the query is not about doors, get a response from Gemini
+    gemini_response = generate_gemini_response(user_query)
 
+    return jsonify({"response": gemini_response})
 
+if __name__ == "__main__":
+    app.run(debug=True)
