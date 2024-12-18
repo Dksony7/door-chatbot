@@ -1,5 +1,6 @@
 import asyncio
 from app.database import db  # Corrected import
+doors = db['doors']  # 'doors' collection access karo
 import requests
 gemini_api_key = "AIzaSyDgnox9EPhJFq-vkC87yww9mC6q8bN8ta8"
 
