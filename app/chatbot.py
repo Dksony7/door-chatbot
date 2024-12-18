@@ -31,13 +31,13 @@ async def get_stock(user_query):
         # Extract size or design or type from the query
         if "digital" in user_query.lower():
             design = user_query.split(" ")[0]
-            door_data = collection.find_one({"design": design})
+            door_data = doors.find_one({"design": design})
         
         elif "membrane" in user_query.lower():
-            door_data = collection.find_one({"type": "membrane"})
+            door_data = doors.find_one({"type": "membrane"})
         
         elif "32×80" in user_query:
-            door_data = collection.find_one({"size": "32×80"})
+            door_data = doors.find_one({"size": "32×80"})
         
         if door_data:
             # Determine the appropriate image URL
@@ -58,12 +58,12 @@ async def update_stock(user_query):
         size = parts[4]  # Example: "32×78"
         
         # Find the door in the collection
-        door_data = collection.find_one({"design": design, "size": size})
+        door_data = doors.find_one({"design": design, "size": size})
         
         if door_data:
             # Update the stock
             new_stock = door_data['stock'] - sold_quantity
-            collection.update_one(
+            doors.update_one(
                 {"design": design, "size": size},
                 {"$set": {"stock": new_stock}}
             )
