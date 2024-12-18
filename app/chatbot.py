@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import asyncio
 
 # MongoDB Connection
-client = MongoClient("mongodb+srv://<username>:<password>@cluster0.mongodb.net/?retryWrites=true&w=majority")
+client = MongoClient("mongodb+srv://Dipika:9812009386@cluster0.mongodb.net/?retryWrites=true&w=majority")
 db = client['doors']  # Database name
 doors = db['doors']  # Collection name
 
