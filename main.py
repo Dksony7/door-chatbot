@@ -4,8 +4,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from app.routes import router
 from app.chatbot import generate_gemini_response
-    """  # Ensure chatbot_response is properly defined
-
+    
 # Initialize FastAPI app
 app = FastAPI()
 
