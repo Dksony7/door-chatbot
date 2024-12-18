@@ -103,5 +103,5 @@ response = asyncio.run(chatbot_response("32×80 stock"))
 print(response)
 
 
-Error in fetching stock: name 'collection' is not defined
-Error in fetching stock: name 'collection' is not defined
+Error in fetching stock: name 'doors' is not defined
+Error in fetching stock: name 'doors' is not defined
