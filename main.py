@@ -26,13 +26,13 @@ async def serve_index():
 # Chatbot endpoint for POST requests
 @app.post("/chat")
 async def chat_with_bot(user_query: str = Form(...)):
-    response = chatbot_response(user_query)  # Removed `await` if chatbot_response is not async
+    response = generate_gemini_response(user_query)  # Removed `await` if chatbot_response is not async
     return {"response": response}
 
 # Optional: Allow GET requests for /chat
 @app.get("/chat")
 async def chat_with_bot_get(user_query: str):
-    response = chatbot_response(user_query)  # Removed `await` if chatbot_response is not async
+    response = generate_gemini_response(user_query)  # Removed `await` if chatbot_response is not async
     return {"response": response}
 
 # Run the app
