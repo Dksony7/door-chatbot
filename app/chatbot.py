@@ -1,3 +1,4 @@
+import os
 import requests
 from app.database import db
 from flask import Flask, request, jsonify
@@ -11,14 +12,8 @@ doors = db['doors']
 # Base URL for static files
 base_url = "https://door-chatbot9oloollloololiiiool-ill.onrender.com/static/"
 
-
-
-GEMINI_API_KEY = "AIzaSyB5s23WmEPCgZbu8KydOrPkKDx5LcGEm-s"
-GEMINI_API_URL = (
-    f"https://generativelanguage.googleapis.com/v1beta/models/"
-    f"gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-)
-
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyB5s23WmEPCgZbu8KydOrPkKDx5LcGEm-s")
+GEMINI_API_URL = os.getenv("GEMINI_API_URL", f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}")
 
 def get_door_info(query):
     """
@@ -26,14 +21,13 @@ def get_door_info(query):
     """
     door_type_keywords = ['membrane', 'digital', 'warranty']
     matched_doors = []
-
-    for door in doors.find():  # Assuming this fetches all doors
-        for keyword in door_type_keywords:
-            if keyword in query.lower():
-                matched_doors.append(door)
-
+    
+    for keyword in door_type_keywords:
+        if keyword in query.lower():
+            # Filter doors by type
+            matched_doors.extend(doors.find({"type": {"$regex": keyword, "$options": "i"}}))
+            
     return matched_doors
-
 
 def generate_gemini_response(query):
     """
@@ -50,9 +44,8 @@ def generate_gemini_response(query):
         data = response.json()
         return data.get("candidates", [{}])[0].get("output", "No response available.")
     except requests.exceptions.RequestException as e:
-        # Log or return an error message
+        app.logger.error(f"Error with Gemini API: {e}, Response: {response.text}")
         return f"Error communicating with Gemini API: {e}"
-
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -71,12 +64,13 @@ def chat():
         # Prepare door details to send as response
         door_details = []
         for door in door_info:
+            image_url = base_url + door.get("image_path", "default_image.jpg")
             door_details.append({
                 "type": door.get("type"),
                 "design": door.get("design"),
                 "size": door.get("size"),
                 "stock": door.get("stock"),
-                "image": base_url + door.get("image_path", "")  # Assuming you store image path
+                "image": image_url
             })
 
         return jsonify({"door_info": door_details})
@@ -86,7 +80,5 @@ def chat():
 
     return jsonify({"response": gemini_response})
 
-
 if __name__ == "__main__":
-    app.run(debug=True)
-    
+    app.run(debug=os.getenv("FLASK_DEBUG", False))
