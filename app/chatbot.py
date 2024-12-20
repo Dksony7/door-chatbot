@@ -13,7 +13,7 @@ base_url = "https://door-chatbot9oloollloololiiiool-ill.onrender.com/static/"
 
 
 
-GEMINI_API_KEY = "AIzaSyDMLpDZ_Z_pwih4EkWygLSLtdDjuYnb1xI"
+GEMINI_API_KEY = "AIzaSyB5s23WmEPCgZbu8KydOrPkKDx5LcGEm-s"
 GEMINI_API_URL = (
     f"https://generativelanguage.googleapis.com/v1beta/models/"
     f"gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
