@@ -1,20 +1,17 @@
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 from app.routes import router, static_files
 import os
 import uvicorn
 
 app = FastAPI()
 
-# Mount static files to serve images and other assets
+# Mount static files
 app.mount("/static", static_files, name="static")
 
-# Include the router from routes.py
+# Include router for API and template handling
 app.include_router(router)
 
 if __name__ == "__main__":
-    # Get the port from the environment variable (Render sets PORT)
-    port = int(os.getenv("PORT", 10000))  # Default to 10000 for Render
-
-    # Run the app using uvicorn
+    # Get the port from the environment variable or default to 10000
+    port = int(os.getenv("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
