@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-
+from app.chatbot import handle_message  # Import the chatbot handler
+from app.database import db
 router = APIRouter()
 
 # Setup templates for rendering HTML pages
