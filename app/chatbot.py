@@ -20,4 +20,12 @@ def get_chatbot_response(user_input):
             else:
                 return f"Failed to fetch stock information. API response: {response.status_code}"
         
-        # For general chat queries,
+        # For general chat queries, use g4f
+        response = g4f.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": user_input}]
+        )
+        return response["choices"][0]["message"]["content"]
+
+    except Exception as e:
+        return f"Error: {e}"
