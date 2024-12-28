@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from app.chatbot import get_chatbot_response  # Import the chatbot handler
 from app.database import db
+
 router = APIRouter()
 
 # Setup templates for rendering HTML pages
@@ -20,8 +21,12 @@ async def home(request: Request):
     """
     return templates.TemplateResponse("index.html", {"request": request})
 
+
 @router.post("/chat")
 async def chat(request: Request):
+    """
+    Handle chat messages by passing them to the chatbot handler.
+    """
     try:
         data = await request.json()
         message = data.get("message")
@@ -29,19 +34,10 @@ async def chat(request: Request):
             raise HTTPException(status_code=400, detail="Message is required")
 
         # Call your chatbot handler function
-        response = get_chatbot_response(message)  
-
+        response = get_chatbot_response(message)
         return {"reply": response}
+
     except Exception as e:
-        # Log the error (recommended to use a proper logger)
+        # Log the error (use a proper logging mechanism for production)
         print(f"Error in /chat endpoint: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
-        
-
-
-
-
-
-    # Placeholder response logic
-    response = {"reply": f"Received message: {message}"}
-    return response
