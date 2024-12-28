@@ -20,16 +20,27 @@ async def home(request: Request):
     """
     return templates.TemplateResponse("index.html", {"request": request})
 
-
 @router.post("/chat")
-async def chat(request: dict):
-    """
-    Handle chat messages.
-    This is a placeholder endpoint for the chatbot.
-    """
-    message = request.get("message")
-    if not message:
-        raise HTTPException(status_code=400, detail="Message is required")
+async def chat(request: Request):
+    try:
+        data = await request.json()
+        message = data.get("message")
+        if not message:
+            raise HTTPException(status_code=400, detail="Message is required")
+
+        # Call your chatbot handler function
+        response = handle_message(message)  
+
+        return {"reply": response}
+    except Exception as e:
+        # Log the error (recommended to use a proper logger)
+        print(f"Error in /chat endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+        
+
+
+
+
 
     # Placeholder response logic
     response = {"reply": f"Received message: {message}"}
