@@ -4,7 +4,7 @@ from pymongo import MongoClient
 try:
     client = MongoClient("mongodb+srv://Dipika:9812009386@cluster0.dajxp.mongodb.net/?retryWrites=true&w=majority")
     db = client["doors"]  # Use your database name
-    inventory_collection = db["inventory"]  # Collection for inventory
+    inventory_collection = db["doors"]  # Collection for inventory
     print("Connected to MongoDB Atlas.")
 except Exception as e:
     print("Failed to connect to MongoDB: ", str(e))
