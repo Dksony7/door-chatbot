@@ -1,8 +1,10 @@
-fastapi
+
 pymongo
 uvicorn
-
+flask
+flask-cors
+g4f
 requests
 gunicorn
-flask
+
 python-multipart
