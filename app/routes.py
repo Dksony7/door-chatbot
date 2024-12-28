@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from app.database import db  # Import the MongoDB connection from database.py
+from app.database import db  # Import MongoDB connection from database.py
 
-# Mount static files using the FastAPI instance in main.py
+# Create a static files instance
 static_files = StaticFiles(directory="static")
 
 # Create the APIRouter instance
@@ -57,3 +57,17 @@ def update_stock(design: str, size: str, sold: int):
     # Update the stock in the database
     db["doors"].update_one({"_id": door["_id"]}, {"$set": {"stock": new_stock}})
     return {"message": "Stock updated successfully."}
+
+@router.post("/chat")
+async def chat(request: dict):
+    """
+    Handle chat messages.
+    This is a placeholder endpoint that simulates a chatbot reply.
+    """
+    message = request.get("message")
+    if not message:
+        raise HTTPException(status_code=400, detail="Message is required")
+
+    # This is where you could integrate the OpenAI model or chatbot logic
+    response = {"reply": f"Received message: {message}"}
+    return response
