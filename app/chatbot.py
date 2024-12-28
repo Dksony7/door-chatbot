@@ -1,54 +1,34 @@
-from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel
 import requests
 from typing import Dict
+import g4f
 
-router = APIRouter()
 
-# Define a Pydantic model for the request body
-class ChatRequest(BaseModel):
-    message: str
-
-def make_api_request(url: str, data: Dict) -> Dict:
-    """
-    Make a POST request to the external API and handle errors.
-    """
+def get_chatbot_response(user_input: str) -> str:
+    """Generate a chatbot response using g4f and handle inventory-related queries."""
     try:
-        response = requests.post(url, json=data, timeout=5)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        return {"error": str(e)}
+        # Check if the input matches a door size query (e.g., "32×80")
+        if "×" in user_input:
+            api_url = "https://door-chatbot9oloollloololiiiool-ill.onrender.com/check_stock"
+            response = make_api_request(api_url, {"size": user_input})
+            
+            if "stock" in response:
+                stock = response["stock"]
+                return f"The stock for size {user_input} is {stock}."
+            elif "message" in response:
+                return response["message"]
+            elif "error" in response:
+                return response["error"]
+            else:
+                return "Unexpected response format from the inventory API."
 
-@router.post("/chat")
-async def chat(request: ChatRequest):
-    """
-    Handle chat requests and process both general chat and inventory queries.
-    """
-    user_input = request.message
-
-    # Check if input is related to a door size (e.g., "32×80")
-    if "×" in user_input:
-        api_url = "https://door-chatbot9oloollloololiiiool-ill.onrender.com/check_stock"
-        response = make_api_request(api_url, {"size": user_input})
-
-        # Handle the stock response
-        if "stock" in response:
-            stock = response["stock"]
-            return {"reply": f"The stock for size {user_input} is {stock}."}
-        elif "message" in response:
-            return {"reply": response["message"]}
-        elif "error" in response:
-            return {"reply": f"Error: {response['error']}"}
-
-    # For general queries, fallback to g4f or other chatbot logic
-    try:
-        import g4f  # Ensure g4f is properly installed
+        # For general chat queries, use g4f
         response = g4f.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": user_input}]
         )
-        chatbot_reply = response["choices"][0]["message"]["content"]
-        return {"reply": chatbot_reply}
+        return response["choices"][0]["message"]["content"]
+
+    except g4f.exceptions.APIError as api_err:
+        return f"g4f API error: {api_err}"
     except Exception as e:
-        return {"reply": f"Error with chatbot: {str(e)}"}
+        return f"An unexpected error occurred: {e}"
