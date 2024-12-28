@@ -1,14 +1,12 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from app.database import db  # Import the MongoDB connection from database.py
 
-# Create the FastAPI app instance
-app = FastAPI()
+# Mount static files using the FastAPI instance in main.py
+static_files = StaticFiles(directory="static")
 
-# Mount static files directory to serve images and other static assets
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
+# Create the APIRouter instance
 router = APIRouter()
 
 @router.get("/", response_class=HTMLResponse)
@@ -59,6 +57,3 @@ def update_stock(design: str, size: str, sold: int):
     # Update the stock in the database
     db["doors"].update_one({"_id": door["_id"]}, {"$set": {"stock": new_stock}})
     return {"message": "Stock updated successfully."}
-
-# Include the router in the app
-app.include_router(router)
