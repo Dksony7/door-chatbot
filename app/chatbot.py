@@ -10,7 +10,7 @@ def get_chatbot_response(user_input: str) -> str:
         if "×" in user_input:
             api_url = "https://door-chatbot9oloollloololiiiool-ill.onrender.com/check_stock"
             response = make_api_request(api_url, {"size": user_input})
-            
+
             if "stock" in response:
                 stock = response["stock"]
                 return f"The stock for size {user_input} is {stock}."
@@ -28,7 +28,5 @@ def get_chatbot_response(user_input: str) -> str:
         )
         return response["choices"][0]["message"]["content"]
 
-    except g4f.exceptions.APIError as api_err:
-        return f"g4f API error: {api_err}"
     except Exception as e:
         return f"An unexpected error occurred: {e}"
