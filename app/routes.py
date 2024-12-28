@@ -1,73 +1,35 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from app.database import db  # Import MongoDB connection from database.py
 
-# Create a static files instance
-static_files = StaticFiles(directory="static")
-
-# Create the APIRouter instance
 router = APIRouter()
 
+# Setup templates for rendering HTML pages
+templates = Jinja2Templates(directory="templates")
+
+# Serve static files (images, CSS, etc.)
+static_files = StaticFiles(directory="static")
+
+
 @router.get("/", response_class=HTMLResponse)
-async def serve_index():
+async def home(request: Request):
     """
-    Serve the index.html file for the chatbot frontend.
+    Render the homepage (index.html).
     """
-    with open("templates/index.html") as file:
-        return file.read()
+    return templates.TemplateResponse("index.html", {"request": request})
 
-@router.get("/doors/{size}")
-def get_doors_by_size(size: str):
-    """
-    Fetch doors data for a specific size.
-    """
-    # Query MongoDB for doors of the specified size
-    doors = list(db["doors"].find({"size": size}))
-
-    if not doors:
-        raise HTTPException(status_code=404, detail=f"No doors available for size {size}.")
-
-    grouped_data = {}
-    for door in doors:
-        if door["type"] not in grouped_data:
-            grouped_data[door["type"]] = []
-        grouped_data[door["type"]].append({
-            "design": door["design"],
-            "stock": door["stock"],
-            "image_path": door["image_path"]
-        })
-
-    return {"size": size, "details": grouped_data}
-
-@router.post("/update_stock")
-def update_stock(design: str, size: str, sold: int):
-    """
-    Update the stock of a specific door design and size.
-    """
-    # Find the specific door document
-    door = db["doors"].find_one({"design": design, "size": size})
-    if not door:
-        raise HTTPException(status_code=404, detail=f"No door found for design {design} and size {size}.")
-
-    new_stock = door["stock"] - sold
-    if new_stock < 0:
-        raise HTTPException(status_code=400, detail="Insufficient stock.")
-
-    # Update the stock in the database
-    db["doors"].update_one({"_id": door["_id"]}, {"$set": {"stock": new_stock}})
-    return {"message": "Stock updated successfully."}
 
 @router.post("/chat")
 async def chat(request: dict):
     """
     Handle chat messages.
-    This is a placeholder endpoint that simulates a chatbot reply.
+    This is a placeholder endpoint for the chatbot.
     """
     message = request.get("message")
     if not message:
         raise HTTPException(status_code=400, detail="Message is required")
 
-    # This is where you could integrate the OpenAI model or chatbot logic
+    # Placeholder response logic
     response = {"reply": f"Received message: {message}"}
     return response
