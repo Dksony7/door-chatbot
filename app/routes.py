@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from app.chatbot import handle_message  # Import the chatbot handler
+from app.chatbot import get_chatbot_response  # Import the chatbot handler
 from app.database import db
 router = APIRouter()
 
@@ -29,7 +29,7 @@ async def chat(request: Request):
             raise HTTPException(status_code=400, detail="Message is required")
 
         # Call your chatbot handler function
-        response = handle_message(message)  
+        response = get_chatbot_response(message)  
 
         return {"reply": response}
     except Exception as e:
