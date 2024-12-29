@@ -3,36 +3,41 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from app.chatbot import get_chatbot_response  # Import the chatbot handler
-from app.database import db  # Assume this is your MongoDB connection
+from app.database import db
 
- router = APIRouter()
+router = APIRouter()
 
-@router.post("/check_stock")
-async def check_stock(request: Request):
+# Setup templates for rendering HTML pages
+templates = Jinja2Templates(directory="templates")
+
+# Serve static files (images, CSS, etc.)
+static_files = StaticFiles(directory="static")
+
+
+@router.get("/", response_class=HTMLResponse)
+async def home(request: Request):
     """
-    Check stock availability for a given design and size.
+    Render the homepage (index.html).
+    """
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@router.post("/chat")
+async def chat(request: Request):
+    """
+    Handle chat messages by passing them to the chatbot handler.
     """
     try:
         data = await request.json()
-        design = data.get("design")
-        size = data.get("size")
+        message = data.get("message")
+        if not message:
+            raise HTTPException(status_code=400, detail="Message is required")
 
-        if not design or not size:
-            raise HTTPException(status_code=400, detail="Design and size are required")
-
-        # Query the inventory collection based on the "design" and "size"
-        stock_item = inventory_collection.find_one({"design": design, "size": size}, {"_id": 0})
-
-        if not stock_item:
-            return {"status": "success", "stock": 0, "message": "Item not found."}  # Return 0 if no matching item is found
-
-        # Fetch the stock count
-        stock = stock_item["stock"]
-        # Add the image path to the response
-        image_path = stock_item["image_path"]
-
-        return {"status": "success", "stock": stock, "image_path": image_path}  # Return stock count and image path
+        # Call your chatbot handler function
+        response = get_chatbot_response(message)
+        return {"reply": response}
 
     except Exception as e:
-        print(f"Error in /check_stock endpoint: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")       
+        # Log the error (use a proper logging mechanism for production)
+        print(f"Error in /chat endpoint: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
