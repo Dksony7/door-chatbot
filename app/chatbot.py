@@ -24,7 +24,7 @@ def get_chatbot_response(user_input: str) -> str:
     try:
         # Check if the user is querying door size availability (using '×' as the separator in size queries)
         if "×" in user_input:
-            api_url = "http://127.0.0.1:10000/check_stock"  # Replace with your production URL
+            api_url = "https://door-chatbot9oloollloololiiiool-ill.onrender.com/check_stock"  # Replace with your production URL
             response = make_api_request(api_url, {"size": user_input})
             
             # Process the API response for stock check
