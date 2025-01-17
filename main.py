@@ -1,11 +1,16 @@
-from fastapi import FastAPI
-from app.routes import router
-import uvicorn
+import g4f
+from flask import Flask, request, jsonify
 
-app = FastAPI()
+app = Flask(__name__)
 
-# Include the router for API routes
-app.include_router(router)
+@app.route('/chat', methods=['POST'])
+def chat():
+    user_input = request.json.get('message')
+    response = g4f.ChatCompletion.create(
+        model='gpt-3.5-turbo',
+        messages=[{"role": "user", "content": user_input}]
+    )
+    return jsonify({'response': response.choices[0].message['content']})
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=10000)
+if __name__ == '__main__':
+    app.run(debug=True)
