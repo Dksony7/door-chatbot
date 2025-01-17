@@ -1,10 +1,4 @@
-jinja2
-pymongo
-uvicorn
-flask
-flask-cors
+Flask
+Flask-Cors
 g4f
-requests
 gunicorn
-fastapi
-python-multipart
